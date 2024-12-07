@@ -3,14 +3,14 @@ using System.Reflection;
 
 namespace AdventOfCode.Common;
 
-public sealed class PuzzleDay
+public sealed class Puzzle
 {
-    private readonly IDaySolver _solver;
+    private readonly IPuzzleSolver _solver;
     private readonly int _year;
     private readonly string _expectedSampleResultPart1;
     private readonly string _expectedSampleResultPart2;
 
-    public PuzzleDay(int year, int day, string title, string expectedSampleResultPart1, string expectedSampleResultPart2, IDaySolver solver)
+    public Puzzle(int year, int day, string title, string expectedSampleResultPart1, string expectedSampleResultPart2, IPuzzleSolver solver)
     {
         _year = year;
         _expectedSampleResultPart1 = expectedSampleResultPart1;

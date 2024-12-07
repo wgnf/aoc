@@ -1,7 +1,7 @@
 ﻿namespace AdventOfCode.Common;
 
 [AttributeUsage(AttributeTargets.Class)]
-public sealed class PuzzleDayAttribute : Attribute
+public sealed class PuzzleAttribute : Attribute
 {
     public int Day { get; set; }
 

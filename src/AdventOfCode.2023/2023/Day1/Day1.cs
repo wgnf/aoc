@@ -5,8 +5,8 @@ using AdventOfCode.Common;
 
 namespace AdventOfCode._2023._2023.Day1;
 
-[PuzzleDay(Day = 1, Title = "Trebuchet?!", ExpectedSampleResultPart1 = "142", ExpectedSampleResultPart2 = "281")]
-public sealed class Day1 : IDaySolver
+[Puzzle(Day = 1, Title = "Trebuchet?!", ExpectedSampleResultPart1 = "142", ExpectedSampleResultPart2 = "281")]
+public sealed class Day1 : IPuzzleSolver
 {
     private List<string> _inputLines = [];
 

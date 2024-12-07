@@ -72,9 +72,9 @@
 
 
 @code {
-    private IEnumerable<YearDto>? AllYears { get; set; }
+    private IEnumerable<AdventOfCodeYear>? AllYears { get; set; }
 
-    private YearDto? SelectedYear { get; set; }
+    private AdventOfCodeYear? SelectedYear { get; set; }
 
     protected override void OnInitialized()
     {
@@ -83,7 +83,7 @@
         AllYears ??= PuzzleProvider.GetAllYears();
     }
 
-    private void SolvePuzzle(PuzzleDay puzzle)
+    private void SolvePuzzle(Puzzle puzzle)
     {
         puzzle.Solve();
 
@@ -97,9 +97,9 @@
         StateHasChanged();
     }
 
-    private void SolveAllOfYear(YearDto year)
+    private void SolveAllOfYear(AdventOfCodeYear adventOfCodeYear)
     {
-        foreach (var puzzle in year.Puzzles.ToList())
+        foreach (var puzzle in adventOfCodeYear.Puzzles.ToList())
         {
             SolvePuzzle(puzzle);
         }

@@ -2,5 +2,5 @@
 
 public interface IPuzzleSolverProvider
 {
-    public IEnumerable<YearDto> GetAllYears();
+    public IEnumerable<AdventOfCodeYear> GetAllYears();
 }

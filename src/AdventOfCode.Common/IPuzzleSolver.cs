@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Common;
 
-public interface IDaySolver
+public interface IPuzzleSolver
 {
     public void Init(IEnumerable<string> inputLines);
     public string SolvePart1();

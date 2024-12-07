@@ -4,8 +4,8 @@ namespace AdventOfCode._2023._2023.Day2;
 
 // ReSharper disable UnusedType.Global
 
-[PuzzleDay(Day = 2, Title = "Cube Conundrum", ExpectedSampleResultPart1 = "8", ExpectedSampleResultPart2 = "2286")]
-internal sealed class Day2 : IDaySolver
+[Puzzle(Day = 2, Title = "Cube Conundrum", ExpectedSampleResultPart1 = "8", ExpectedSampleResultPart2 = "2286")]
+internal sealed class Day2 : IPuzzleSolver
 {
     private List<string> _inputLines = [];
     private readonly List<Cube> _cubeConfigurations = new()
