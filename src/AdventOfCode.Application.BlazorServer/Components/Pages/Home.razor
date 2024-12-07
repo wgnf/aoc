@@ -1,0 +1,107 @@
+﻿@page "/"
+@using AdventOfCode.Common
+@inject IPuzzleSolverProvider PuzzleProvider;
+
+<PageTitle>AdventOfCode - Home</PageTitle>
+
+<h1>AdventOfCode</h1>
+
+<p>
+    by <a href="https://github.com/wgnf/">Martin Wagenführ</a>
+</p>
+
+<p>
+    <p>
+        @if (AllYears != null)
+        {
+            @foreach (var year in AllYears)
+            {
+                <button class="btn btn-outline-primary me-2" @onclick="() => SelectedYear = year">@year.Year</button>
+            }
+        }
+    </p>
+
+    @if (SelectedYear != null)
+    {
+        <p>
+            <h2>@SelectedYear.Year</h2>
+
+            <p>
+                <button class="btn btn-primary" @onclick="() => SolveAllOfYear(SelectedYear)">Solve all</button>
+            </p>
+
+
+            <table class="table table-striped table-sm">
+                <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Title</th>
+                    <th>PART 1 - Example Result</th>
+                    <th>Took (ms)</th>
+                    <th>PART 1 - Input Result</th>
+                    <th>Took (ms)</th>
+                    <th>PART 2 - Example Result</th>
+                    <th>Took (ms)</th>
+                    <th>PART 2 - Example Result</th>
+                    <th>Took (ms)</th>
+                    <th>Solve</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @foreach (var day in SelectedYear.Puzzles)
+                    {
+                        <tr @key="day.Day">
+                            <th scope="row">@day.Day</th>
+                            <td>@day.Title</td>
+                            <td>@day.SampleResultPart1</td>
+                            <td>@day.SampleResultPart1Took</td>
+                            <td>@day.InputResultPart1</td>
+                            <td>@day.InputResultPart1Took</td>
+                            <td>@day.SampleResultPart2</td>
+                            <td>@day.SampleResultPart2Took</td>
+                            <td>@day.InputResultPart2</td>
+                            <td>@day.InputResultPart2Took</td>
+                            <td><button class="btn btn-secondary" @onclick="() => SolvePuzzle(day)">Solve</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </p>
+    }
+</p>
+
+
+@code {
+    private IEnumerable<YearDto>? AllYears { get; set; }
+
+    private YearDto? SelectedYear { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        AllYears ??= PuzzleProvider.GetAllYears();
+    }
+
+    private void SolvePuzzle(PuzzleDay puzzle)
+    {
+        puzzle.Solve();
+
+        // TODO: why the fuck is this needed?????
+        var existing = SelectedYear!.Puzzles.FirstOrDefault(p => p.Day == puzzle.Day);
+        var indexOfExisting = SelectedYear!.Puzzles.IndexOf(existing!);
+
+        SelectedYear!.Puzzles.RemoveAt(indexOfExisting);
+        SelectedYear!.Puzzles.Insert(indexOfExisting, puzzle);
+
+        StateHasChanged();
+    }
+
+    private void SolveAllOfYear(YearDto year)
+    {
+        foreach (var puzzle in year.Puzzles.ToList())
+        {
+            SolvePuzzle(puzzle);
+        }
+    }
+}
