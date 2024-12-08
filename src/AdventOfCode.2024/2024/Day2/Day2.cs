@@ -33,17 +33,12 @@ internal sealed class Day2 : IPuzzleSolver
 
     public string SolvePart2()
     {
-        Console.WriteLine("============================");
-
         var safeReports = 0;
 
         foreach (var report in _reports)
         {
-            Console.WriteLine($"\n\nREPORT: {string.Join(" ", report.LevelContainer.Levels.Select(l => l.Value))}");
-
             if (report.IsSafe())
             {
-                Console.WriteLine("ALREADY SAFE");
                 safeReports++;
                 continue;
             }
@@ -52,12 +47,7 @@ internal sealed class Day2 : IPuzzleSolver
 
             if (report.IsSafe())
             {
-                Console.WriteLine("MADE SAFE");
                 safeReports++;
-            }
-            else
-            {
-                Console.WriteLine("STILL NOT SAFE");
             }
         }
         return safeReports.ToString();
