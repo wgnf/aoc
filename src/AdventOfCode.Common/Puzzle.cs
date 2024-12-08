@@ -106,7 +106,6 @@ public sealed class Puzzle
             : $"{resultPart1} ❌ ({_expectedSampleResultPart1})";
         SampleResultPart1Took = stopwatchPart1.ElapsedMilliseconds;
 
-
         // part 2...
         var filenamePart2 = GetExampleFilename(1);
         var inputPart2 = GetInputFromFile(filenamePart2);
