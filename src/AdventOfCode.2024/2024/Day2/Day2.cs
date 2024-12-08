@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using AdventOfCode.Common;
+﻿using AdventOfCode.Common;
 using AdventOfCode.Common.Utils;
 
 namespace AdventOfCode._2024._2024.Day2;
@@ -8,11 +7,11 @@ namespace AdventOfCode._2024._2024.Day2;
 // ReSharper disable once UnusedType.Global
 internal sealed class Day2 : IPuzzleSolver
 {
-    private List<List<int>> _diffsPerLine = [];
+    private List<Report> _reports = [];
 
     public void Init(IEnumerable<string> inputLines)
     {
-        _diffsPerLine = [];
+        _reports = [];
 
         foreach (var line in inputLines)
         {
@@ -21,150 +20,46 @@ internal sealed class Day2 : IPuzzleSolver
                 .Select(int.Parse)
                 .ToList();
 
-            var diffs = new List<int>();
-
-            for (var index = 0; index < levels.Count - 1; index++)
-            {
-                var current = levels[index];
-                var next = levels[index + 1];
-
-                var diff = current - next;
-                diffs.Add(diff);
-            }
-
-            _diffsPerLine.Add(diffs);
+            var report = new Report(levels);
+            _reports.Add(report);
         }
     }
 
     public string SolvePart1()
     {
-        var safeReports = 0;
-
-        foreach (var reportDiffs in _diffsPerLine)
-        {
-            if (IsReportSafe(reportDiffs))
-            {
-                safeReports++;
-            }
-        }
-
+        var safeReports = _reports.Count(report => report.IsSafe());
         return safeReports.ToString();
     }
 
     public string SolvePart2()
     {
+        Console.WriteLine("============================");
+
         var safeReports = 0;
 
-        foreach (var reportDiffs in _diffsPerLine)
+        foreach (var report in _reports)
         {
-            if (reportDiffs is [-2, -2, -3, -1, 3, 3])
+            Console.WriteLine($"\n\nREPORT: {string.Join(" ", report.Levels.Select(l => l.Value))}");
+
+            if (report.IsSafe())
             {
-                Debugger.Break();
-            }
-
-            var numberIncreasing = reportDiffs.Count(x => x > 0);
-            var numberDecreasing = reportDiffs.Count(x => x < 0);
-            var numberNoDiff = reportDiffs.Count(x => x == 0);
-
-            // no outliers
-            if ((numberIncreasing == 0 || numberDecreasing == 0) && numberNoDiff == 0)
-            {
-                if (IsReportSafe(reportDiffs))
-                {
-                    safeReports++;
-                }
-
+                Console.WriteLine("ALREADY SAFE");
+                safeReports++;
                 continue;
             }
 
-            // too many outliers
-            if (numberIncreasing > 1 && numberDecreasing > 1)
+            report.TryToMakeSafe();
+
+            if (report.IsSafe())
             {
-                continue;
+                Console.WriteLine("MADE SAFE");
+                safeReports++;
             }
-
-            if (numberNoDiff == 1)
+            else
             {
-                var outlier = reportDiffs.Single(x => x == 0);
-                var outlierIndex = reportDiffs.IndexOf(outlier);
-
-                RemoveOutlierAtIndexAndRecalculate(reportDiffs, outlierIndex);
-
-                if (IsReportSafe(reportDiffs))
-                {
-                    safeReports++;
-                }
-            }
-
-            // one is increasing rest is decreasing
-            if (numberIncreasing == 1 && numberDecreasing > 1)
-            {
-                int outlier;
-                try
-                {
-                    outlier = reportDiffs.Single(x => x > 0);
-                }
-                catch (Exception)
-                {
-                    // TODO: HOW?!?!??!?!?!?!?!??!
-                    continue;
-                }
-
-                var outlierIndex = reportDiffs.IndexOf(outlier);
-
-                RemoveOutlierAtIndexAndRecalculate(reportDiffs, outlierIndex);
-
-                if (IsReportSafe(reportDiffs))
-                {
-                    safeReports++;
-                }
-            }
-
-            // one is decreasing rest is increasing
-            if (numberIncreasing > 1 && numberDecreasing == 1)
-            {
-                int outlier;
-                try
-                {
-                    outlier = reportDiffs.Single(x => x < 0);
-                }
-                catch (Exception)
-                {
-                    continue;
-                }
-                var outlierIndex = reportDiffs.IndexOf(outlier);
-
-                RemoveOutlierAtIndexAndRecalculate(reportDiffs, outlierIndex);
-
-                if (IsReportSafe(reportDiffs))
-                {
-                    safeReports++;
-                }
+                Console.WriteLine("STILL NOT SAFE");
             }
         }
-
         return safeReports.ToString();
-    }
-
-    private static bool IsReportSafe(List<int> reportDiffs)
-    {
-        var increasingAndValid = reportDiffs.TrueForAll(diff => diff > 0 && (diff.Abs() <= 3 && diff.Abs() >= 1));
-        var decreasingAndValid = reportDiffs.TrueForAll(diff => diff < 0 && (diff.Abs() <= 3 && diff.Abs() >= 1));
-
-        return increasingAndValid || decreasingAndValid;
-    }
-
-    private static void RemoveOutlierAtIndexAndRecalculate(List<int> reportDiffs, int outlierIndex)
-    {
-        // when it's not front or back recalculate diffs
-        if (outlierIndex == 0 || outlierIndex == reportDiffs.Count - 1)
-        {
-            reportDiffs.RemoveAt(outlierIndex);
-            return;
-        }
-
-        var newDiff = reportDiffs[outlierIndex] + reportDiffs[outlierIndex + 1];
-        reportDiffs.RemoveAt(outlierIndex);
-        reportDiffs[outlierIndex - 1] = newDiff;
     }
 }

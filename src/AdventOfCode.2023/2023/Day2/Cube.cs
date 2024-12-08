@@ -2,7 +2,7 @@
 
 internal sealed class Cube
 {
-    public string Color { get; set; }
+    public string Color { get; set; } = string.Empty;
 
     public int Amount { get; set; }
 }

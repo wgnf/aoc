@@ -2,7 +2,7 @@
 
 internal sealed class Hand
 {
-    public string Cards { get; set; }
+    public string Cards { get; set; } = string.Empty;
 
     public int BidAmount { get; set; }
 
