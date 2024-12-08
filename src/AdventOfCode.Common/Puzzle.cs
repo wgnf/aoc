@@ -107,7 +107,7 @@ public sealed class Puzzle
         SampleResultPart1Took = stopwatchPart1.ElapsedMilliseconds;
 
         // part 2...
-        var filenamePart2 = GetExampleFilename(1);
+        var filenamePart2 = GetExampleFilename(2);
         var inputPart2 = GetInputFromFile(filenamePart2);
 
         var stopwatchPart2 = Stopwatch.StartNew();
