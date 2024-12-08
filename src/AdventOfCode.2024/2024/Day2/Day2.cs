@@ -39,7 +39,7 @@ internal sealed class Day2 : IPuzzleSolver
 
         foreach (var report in _reports)
         {
-            Console.WriteLine($"\n\nREPORT: {string.Join(" ", report.Levels.Select(l => l.Value))}");
+            Console.WriteLine($"\n\nREPORT: {string.Join(" ", report.LevelContainer.Levels.Select(l => l.Value))}");
 
             if (report.IsSafe())
             {
