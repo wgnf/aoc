@@ -1,43 +1,46 @@
 ﻿using AdventOfCode.Common;
-using AdventOfCode.Common.Utils;
-
+using AdventOfCode.Common.Primitives;
 namespace AdventOfCode._2024._2024.Day4;
 
 [Puzzle(Day = 4, Title = "Ceres Search", ExpectedSampleResultPart1 = "18", ExpectedSampleResultPart2 = "9")]
 // ReSharper disable once UnusedType.Global
 internal sealed class Day4 : IPuzzleSolver
 {
-    private List<List<char>> _letterMatrix = [];
+    private Matrix<char> _letterMatrix = new Matrix<char>(1, 1);
 
     public void Init(IEnumerable<string> inputLines)
     {
-        _letterMatrix = [];
-        foreach (var line in inputLines)
-        {
-            var letterMatrixLine = new List<char>();
-            letterMatrixLine.AddRange(line.ToCharArray());
+        var inputLinesList = inputLines.ToList();
 
-            _letterMatrix.Add(letterMatrixLine);
+        var rows = inputLinesList.Count;
+        var columns = inputLinesList.First().Length;
+
+        _letterMatrix = new Matrix<char>(rows, columns);
+
+        for (var row = 0; row < rows; row++)
+        {
+            var line = inputLinesList.ElementAt(row);
+
+            for (var column = 0; column < columns; column++)
+            {
+                var letter = line[column];
+                _letterMatrix.Insert(letter, row, column);
+            }
         }
     }
 
     public string SolvePart1()
     {
         var totalOccurrences = 0;
-        for (var row = 0; row < _letterMatrix.Count; row++)
+        _letterMatrix.ForEach((row, col, letter) =>
         {
-            for (var col = 0; col < _letterMatrix.Count; col++)
+            // X marks the start of our search, because it's the start of "XMAS"
+            if (letter == 'X')
             {
-                var currentLetter = _letterMatrix[row][col];
-
-                // X marks the start of our search, because its the start of "XMAS"
-                if (currentLetter == 'X')
-                {
-                    var occurrences = SearchForOccurrencesStartingFrom(row, col);
-                    totalOccurrences += occurrences;
-                }
+                var occurrences = SearchForOccurrencesStartingFrom(row, col);
+                totalOccurrences += occurrences;
             }
-        }
+        });
 
         return totalOccurrences.ToString();
     }
@@ -45,19 +48,14 @@ internal sealed class Day4 : IPuzzleSolver
     public string SolvePart2()
     {
         var totalOccurrences = 0;
-        for (var row = 0; row < _letterMatrix.Count; row++)
+        _letterMatrix.ForEach((row, col, letter) =>
         {
-            for (var column = 0; column < _letterMatrix.Count; column++)
+            // A marks the start of our search, because it needs to be in the middle of each "MAS"
+            if (letter == 'A' && HasMasInXFormStartingFrom(row, col))
             {
-                var currentLetter = _letterMatrix[row][column];
-
-                // A marks the start of our search, because it needs to be in the middle of each "MAS"
-                if (currentLetter == 'A' && HasMasInXFormStartingFrom(row, column))
-                {
-                    totalOccurrences++;
-                }
+                totalOccurrences++;
             }
-        }
+        });
 
         return totalOccurrences.ToString();
     }
@@ -69,7 +67,7 @@ internal sealed class Day4 : IPuzzleSolver
 
         foreach (var direction in Enum.GetValues<Direction>())
         {
-            var collected = MatrixUtils.CollectInDirection(_letterMatrix, row, column, direction, wordToCollect.Length);
+            var collected = _letterMatrix.CollectInDirection(row, column, direction, wordToCollect.Length);
             var collectedWord = new string(collected.ToArray());
 
             if (collectedWord == wordToCollect)
@@ -91,11 +89,11 @@ internal sealed class Day4 : IPuzzleSolver
         var startLetterTopRightRow = row - 1;
         var startLetterTopRightColumn = column + 1;
 
-        var collectedLeft = MatrixUtils.CollectInDirection(_letterMatrix, startLetterTopLeftRow, startLetterTopLeftColumn, Direction.SouthEast, wordToCollect.Length);
+        var collectedLeft = _letterMatrix.CollectInDirection(startLetterTopLeftRow, startLetterTopLeftColumn, Direction.SouthEast, wordToCollect.Length);
         var collectedWordLeft = new string(collectedLeft.ToArray());
         var reversedCollectedWordLeft = new string(collectedWordLeft.Reverse().ToArray());
 
-        var collectedRight = MatrixUtils.CollectInDirection(_letterMatrix, startLetterTopRightRow, startLetterTopRightColumn, Direction.SouthWest, wordToCollect.Length);
+        var collectedRight = _letterMatrix.CollectInDirection(startLetterTopRightRow, startLetterTopRightColumn, Direction.SouthWest, wordToCollect.Length);
         var collectedWordRight = new string(collectedRight.ToArray());
         var reversedCollectedWordRight = new string(collectedWordRight.Reverse().ToArray());
 

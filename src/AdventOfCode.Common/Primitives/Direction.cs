@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Common.Utils;
+﻿namespace AdventOfCode.Common.Primitives;
 
 public enum Direction
 {
