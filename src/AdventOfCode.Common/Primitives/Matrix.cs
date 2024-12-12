@@ -28,37 +28,41 @@ public sealed class Matrix<TElement>
         }
     }
 
-    public void Insert(TElement element, int row, int column)
+    public bool IsValid(MatrixElement<TElement> element)
     {
-        if (!IsRowValid(row))
-        {
-            throw new ArgumentOutOfRangeException(nameof(row), row, $"Row value should be between 0  and {_rows}");
-        }
-
-        if (!IsColumnValid(column))
-        {
-            throw new ArgumentOutOfRangeException(nameof(column), column, $"Column value should be between 0  and {_columns}");
-        }
-
-        _matrix[row][column] = element;
+        var isRowValid = IsRowValid(element.Row);
+        var isColumnValid = IsColumnValid(element.Column);
+        var isValid = isRowValid && isColumnValid;
+        return isValid;
     }
 
-    public void ForEach(Action<int, int, TElement> action)
+    public void Insert(MatrixElement<TElement> element)
+    {
+        if (!IsValid(element))
+        {
+            throw new ArgumentOutOfRangeException(nameof(element), element, $"Provided value is not valid: {element}");
+        }
+
+        _matrix[element.Row][element.Column] = element.Value;
+    }
+
+    public IEnumerable<MatrixElement<TElement>> AsEnumerable()
     {
         for (var row = 0; row < _rows; row++)
         {
             for (var column = 0; column < _columns; column++)
             {
-                var element = _matrix[row][column];
-                if (element != null)
+                var currentValue = _matrix[row][column];
+                if (currentValue != null)
                 {
-                    action(row, column, element);
+                    var element = new MatrixElement<TElement>(row, column, currentValue);
+                    yield return element;
                 }
             }
         }
     }
 
-    public IEnumerable<TElement> CollectInDirection(
+    public IEnumerable<MatrixElement<TElement>> CollectInDirection(
         int startingRow,
         int startingColumn,
         Direction direction,
@@ -79,7 +83,40 @@ public sealed class Matrix<TElement>
             var currentValue = _matrix[currentRow][currentColumn];
             if (currentValue != null)
             {
-                yield return currentValue;
+                var element = new MatrixElement<TElement>(currentRow, currentColumn, currentValue);
+                yield return element;
+            }
+
+            (currentRow, currentColumn) = direction.Adjust2DIndexBasedOnDirection(currentRow, currentColumn);
+        }
+    }
+
+    public IEnumerable<MatrixElement<TElement>> CollectInDirectionUntilValueCollected(
+        int startingRow,
+        int startingColumn,
+        Direction direction,
+        TElement valueToCollect)
+    {
+        var currentRow = startingRow;
+        var currentColumn = startingColumn;
+
+        while (true)
+        {
+            if (!IsRowValid(currentRow) || !IsColumnValid(currentColumn))
+            {
+                break;
+            }
+
+            var currentValue = _matrix[currentRow][currentColumn];
+            if (currentValue != null)
+            {
+                var element = new MatrixElement<TElement>(currentRow, currentColumn, currentValue);
+                yield return element;
+
+                if (currentValue.Equals(valueToCollect))
+                {
+                    break;
+                }
             }
 
             (currentRow, currentColumn) = direction.Adjust2DIndexBasedOnDirection(currentRow, currentColumn);

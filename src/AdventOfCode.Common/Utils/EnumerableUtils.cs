@@ -9,4 +9,12 @@ public static class EnumerableUtils
             yield return value;
         }
     }
+
+    public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+    {
+        foreach (var item in source)
+        {
+            action(item);
+        }
+    }
 }

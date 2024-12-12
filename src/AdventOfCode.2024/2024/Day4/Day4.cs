@@ -1,5 +1,7 @@
 ﻿using AdventOfCode.Common;
 using AdventOfCode.Common.Primitives;
+using AdventOfCode.Common.Utils;
+
 namespace AdventOfCode._2024._2024.Day4;
 
 [Puzzle(Day = 4, Title = "Ceres Search", ExpectedSampleResultPart1 = "18", ExpectedSampleResultPart2 = "9")]
@@ -24,7 +26,9 @@ internal sealed class Day4 : IPuzzleSolver
             for (var column = 0; column < columns; column++)
             {
                 var letter = line[column];
-                _letterMatrix.Insert(letter, row, column);
+                var letterElement = new MatrixElement<char>(row, column, letter);
+
+                _letterMatrix.Insert(letterElement);
             }
         }
     }
@@ -32,12 +36,12 @@ internal sealed class Day4 : IPuzzleSolver
     public string SolvePart1()
     {
         var totalOccurrences = 0;
-        _letterMatrix.ForEach((row, col, letter) =>
+        _letterMatrix.AsEnumerable().ForEach(element =>
         {
             // X marks the start of our search, because it's the start of "XMAS"
-            if (letter == 'X')
+            if (element.Value == 'X')
             {
-                var occurrences = SearchForOccurrencesStartingFrom(row, col);
+                var occurrences = SearchForOccurrencesStartingFrom(element.Row, element.Column);
                 totalOccurrences += occurrences;
             }
         });
@@ -48,10 +52,10 @@ internal sealed class Day4 : IPuzzleSolver
     public string SolvePart2()
     {
         var totalOccurrences = 0;
-        _letterMatrix.ForEach((row, col, letter) =>
+        _letterMatrix.AsEnumerable().ForEach(element =>
         {
             // A marks the start of our search, because it needs to be in the middle of each "MAS"
-            if (letter == 'A' && HasMasInXFormStartingFrom(row, col))
+            if (element.Value == 'A' && HasMasInXFormStartingFrom(element.Row, element.Column))
             {
                 totalOccurrences++;
             }
@@ -68,7 +72,8 @@ internal sealed class Day4 : IPuzzleSolver
         foreach (var direction in Enum.GetValues<Direction>())
         {
             var collected = _letterMatrix.CollectInDirection(row, column, direction, wordToCollect.Length);
-            var collectedWord = new string(collected.ToArray());
+            var collectedChars = collected.Select(element => element.Value).ToArray();
+            var collectedWord = new string(collectedChars);
 
             if (collectedWord == wordToCollect)
             {
@@ -90,11 +95,13 @@ internal sealed class Day4 : IPuzzleSolver
         var startLetterTopRightColumn = column + 1;
 
         var collectedLeft = _letterMatrix.CollectInDirection(startLetterTopLeftRow, startLetterTopLeftColumn, Direction.SouthEast, wordToCollect.Length);
-        var collectedWordLeft = new string(collectedLeft.ToArray());
+        var collectedCharsLeft = collectedLeft.Select(element => element.Value).ToArray();
+        var collectedWordLeft = new string(collectedCharsLeft);
         var reversedCollectedWordLeft = new string(collectedWordLeft.Reverse().ToArray());
 
         var collectedRight = _letterMatrix.CollectInDirection(startLetterTopRightRow, startLetterTopRightColumn, Direction.SouthWest, wordToCollect.Length);
-        var collectedWordRight = new string(collectedRight.ToArray());
+        var collectedCharsRight = collectedRight.Select(element => element.Value).ToArray();
+        var collectedWordRight = new string(collectedCharsRight);
         var reversedCollectedWordRight = new string(collectedWordRight.Reverse().ToArray());
 
         if ((collectedWordLeft == wordToCollect || reversedCollectedWordLeft == wordToCollect) &&
