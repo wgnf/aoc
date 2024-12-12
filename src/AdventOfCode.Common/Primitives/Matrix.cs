@@ -28,22 +28,22 @@ public sealed class Matrix<TElement>
         }
     }
 
-    public bool IsValid(MatrixElement<TElement> element)
+    public bool IsPositionValid(Position position)
     {
-        var isRowValid = IsRowValid(element.Row);
-        var isColumnValid = IsColumnValid(element.Column);
+        var isRowValid = IsRowValid(position.Row);
+        var isColumnValid = IsColumnValid(position.Column);
         var isValid = isRowValid && isColumnValid;
         return isValid;
     }
 
     public void Insert(MatrixElement<TElement> element)
     {
-        if (!IsValid(element))
+        if (!IsPositionValid(element.Position))
         {
-            throw new ArgumentOutOfRangeException(nameof(element), element, $"Provided value is not valid: {element}");
+            throw new ArgumentOutOfRangeException(nameof(element), element, $"Position of provided element is not valid: {element.Position}");
         }
 
-        _matrix[element.Row][element.Column] = element.Value;
+        _matrix[element.Position.Row][element.Position.Column] = element.Value;
     }
 
     public IEnumerable<MatrixElement<TElement>> AsEnumerable()
@@ -55,7 +55,8 @@ public sealed class Matrix<TElement>
                 var currentValue = _matrix[row][column];
                 if (currentValue != null)
                 {
-                    var element = new MatrixElement<TElement>(row, column, currentValue);
+                    var position = new Position(row, column);
+                    var element = new MatrixElement<TElement>(position, currentValue);
                     yield return element;
                 }
             }
@@ -63,63 +64,32 @@ public sealed class Matrix<TElement>
     }
 
     public IEnumerable<MatrixElement<TElement>> CollectInDirection(
-        int startingRow,
-        int startingColumn,
+        Position startingPosition,
         Direction direction,
-        int stopAfterMax = int.MaxValue)
+        Func<int, MatrixElement<TElement>, bool>? predicate = null)
     {
-        var currentRow = startingRow;
-        var currentColumn = startingColumn;
-        var collected = 0;
+        predicate ??= (_, _) => true;
 
-        while (collected < stopAfterMax)
+        var currentPosition = startingPosition;
+        var collected = 0;
+        var currentElement = new MatrixElement<TElement>();
+
+        while (predicate.Invoke(collected, currentElement))
         {
-            if (!IsRowValid(currentRow) || !IsColumnValid(currentColumn))
+            if (!IsPositionValid(currentPosition))
             {
                 break;
             }
 
             collected++;
-            var currentValue = _matrix[currentRow][currentColumn];
+            var currentValue = _matrix[currentPosition.Row][currentPosition.Column];
             if (currentValue != null)
             {
-                var element = new MatrixElement<TElement>(currentRow, currentColumn, currentValue);
-                yield return element;
+                currentElement = new MatrixElement<TElement>(currentPosition, currentValue);
+                yield return currentElement;
             }
 
-            (currentRow, currentColumn) = direction.Adjust2DIndexBasedOnDirection(currentRow, currentColumn);
-        }
-    }
-
-    public IEnumerable<MatrixElement<TElement>> CollectInDirectionUntilValueCollected(
-        int startingRow,
-        int startingColumn,
-        Direction direction,
-        TElement valueToCollect)
-    {
-        var currentRow = startingRow;
-        var currentColumn = startingColumn;
-
-        while (true)
-        {
-            if (!IsRowValid(currentRow) || !IsColumnValid(currentColumn))
-            {
-                break;
-            }
-
-            var currentValue = _matrix[currentRow][currentColumn];
-            if (currentValue != null)
-            {
-                var element = new MatrixElement<TElement>(currentRow, currentColumn, currentValue);
-                yield return element;
-
-                if (currentValue.Equals(valueToCollect))
-                {
-                    break;
-                }
-            }
-
-            (currentRow, currentColumn) = direction.Adjust2DIndexBasedOnDirection(currentRow, currentColumn);
+            currentPosition = currentPosition.AdjustBasedOnDirection(direction);
         }
     }
 

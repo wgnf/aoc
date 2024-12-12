@@ -26,7 +26,8 @@ internal sealed class Day4 : IPuzzleSolver
             for (var column = 0; column < columns; column++)
             {
                 var letter = line[column];
-                var letterElement = new MatrixElement<char>(row, column, letter);
+                var position = new Position(row, column);
+                var letterElement = new MatrixElement<char>(position, letter);
 
                 _letterMatrix.Insert(letterElement);
             }
@@ -41,7 +42,7 @@ internal sealed class Day4 : IPuzzleSolver
             // X marks the start of our search, because it's the start of "XMAS"
             if (element.Value == 'X')
             {
-                var occurrences = SearchForOccurrencesStartingFrom(element.Row, element.Column);
+                var occurrences = SearchForOccurrencesStartingFrom(element.Position);
                 totalOccurrences += occurrences;
             }
         });
@@ -55,7 +56,7 @@ internal sealed class Day4 : IPuzzleSolver
         _letterMatrix.AsEnumerable().ForEach(element =>
         {
             // A marks the start of our search, because it needs to be in the middle of each "MAS"
-            if (element.Value == 'A' && HasMasInXFormStartingFrom(element.Row, element.Column))
+            if (element.Value == 'A' && HasMasInXFormStartingFrom(element.Position))
             {
                 totalOccurrences++;
             }
@@ -64,14 +65,14 @@ internal sealed class Day4 : IPuzzleSolver
         return totalOccurrences.ToString();
     }
 
-    private int SearchForOccurrencesStartingFrom(int row, int column)
+    private int SearchForOccurrencesStartingFrom(Position startingPosition)
     {
         var occurrences = 0;
         const string wordToCollect = "XMAS";
 
         foreach (var direction in Enum.GetValues<Direction>())
         {
-            var collected = _letterMatrix.CollectInDirection(row, column, direction, wordToCollect.Length);
+            var collected = _letterMatrix.CollectInDirection(startingPosition, direction, (collectedAmount, _) => collectedAmount < wordToCollect.Length);
             var collectedChars = collected.Select(element => element.Value).ToArray();
             var collectedWord = new string(collectedChars);
 
@@ -84,22 +85,19 @@ internal sealed class Day4 : IPuzzleSolver
         return occurrences;
     }
 
-    private bool HasMasInXFormStartingFrom(int row, int column)
+    private bool HasMasInXFormStartingFrom(Position startingPosition)
     {
         const string wordToCollect = "MAS";
 
-        var startLetterTopLeftRow = row - 1;
-        var startLetterTopLeftColumn = column - 1;
+        var startingPositionTopLeft = new Position(startingPosition.Row - 1, startingPosition.Column - 1);
+        var startingPositionTopRight  = new Position(startingPosition.Row - 1, startingPosition.Column + 1);
 
-        var startLetterTopRightRow = row - 1;
-        var startLetterTopRightColumn = column + 1;
-
-        var collectedLeft = _letterMatrix.CollectInDirection(startLetterTopLeftRow, startLetterTopLeftColumn, Direction.SouthEast, wordToCollect.Length);
+        var collectedLeft = _letterMatrix.CollectInDirection(startingPositionTopLeft, Direction.SouthEast, (collectedAmount, _) => collectedAmount < wordToCollect.Length);
         var collectedCharsLeft = collectedLeft.Select(element => element.Value).ToArray();
         var collectedWordLeft = new string(collectedCharsLeft);
         var reversedCollectedWordLeft = new string(collectedWordLeft.Reverse().ToArray());
 
-        var collectedRight = _letterMatrix.CollectInDirection(startLetterTopRightRow, startLetterTopRightColumn, Direction.SouthWest, wordToCollect.Length);
+        var collectedRight = _letterMatrix.CollectInDirection(startingPositionTopRight, Direction.SouthWest, (collectedAmount, _) => collectedAmount < wordToCollect.Length);
         var collectedCharsRight = collectedRight.Select(element => element.Value).ToArray();
         var collectedWordRight = new string(collectedCharsRight);
         var reversedCollectedWordRight = new string(collectedWordRight.Reverse().ToArray());
