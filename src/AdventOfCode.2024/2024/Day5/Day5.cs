@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using AdventOfCode.Common;
+﻿using AdventOfCode.Common;
 
 namespace AdventOfCode._2024._2024.Day5;
 
@@ -28,9 +27,6 @@ internal sealed class Day5 : IPuzzleSolver
     {
         var updatesInWrongOrder = _queue.GetUpdatesThatAreInWrongOrder();
         updatesInWrongOrder.ForEach(update => _queue.FixOrderOfUpdate(update));
-
-        var allCorrectNow = updatesInWrongOrder.All(update => _queue.IsInRightOrder(update));
-        Debug.Assert(allCorrectNow, "All updates should be correct now!!!");
 
         var result = updatesInWrongOrder
             .Select(update => update.GetMiddlePageNumber())

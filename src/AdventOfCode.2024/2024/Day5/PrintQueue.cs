@@ -4,6 +4,8 @@ namespace AdventOfCode._2024._2024.Day5;
 
 internal sealed class PrintQueue
 {
+    private readonly Dictionary<int, List<int>> _orderingRules = new();
+
     public PrintQueue(List<string> inputLines)
     {
         OrderingRules = [];
@@ -47,76 +49,25 @@ internal sealed class PrintQueue
             .ToList();
     }
 
-    public bool IsInRightOrder(Update update)
-    {
-        var isInRightOrder = true;
-
-        foreach (var orderingRule in OrderingRules)
-        {
-            if (!IsOrderingRuleApplicable(update, orderingRule))
-            {
-                continue;
-            }
-
-            var indexOfBefore = update.PagesToProduce.IndexOf(orderingRule.PageBefore);
-            var indexOfAfter = update.PagesToProduce.IndexOf(orderingRule.PageAfter);
-
-            isInRightOrder &= indexOfBefore < indexOfAfter;
-        }
-
-        return isInRightOrder;
-    }
-
     public void FixOrderOfUpdate(Update update)
     {
-        var orderingRulesThatApply = OrderingRules
-            .Where(orderingRule => IsOrderingRuleApplicable(update, orderingRule))
-            .ToList();
+        var newUpdates = new int[update.PagesToProduce.Count];
 
-        var allOrderingRulePages = orderingRulesThatApply.SelectMany(orderingRule => new[] { orderingRule.PageBefore, orderingRule.PageAfter });
-        var numbersNotInAnyRule = update.PagesToProduce.Where(page => !allOrderingRulePages.Contains(page));
-
-        var pagesToProduce = new List<int>();
-        foreach (var orderingRule in orderingRulesThatApply)
+        foreach (var pageToProduce in update.PagesToProduce)
         {
-            if (!pagesToProduce.Contains(orderingRule.PageBefore) && !pagesToProduce.Contains(orderingRule.PageAfter))
+            var newIndex = 0;
+            foreach (var innerPageToProduce in update.PagesToProduce)
             {
-                pagesToProduce.Add(orderingRule.PageBefore);
-                pagesToProduce.Add(orderingRule.PageAfter);
-            }
-
-            else if (!pagesToProduce.Contains(orderingRule.PageBefore) && pagesToProduce.Contains(orderingRule.PageAfter))
-            {
-                var indexOfPageAfter = pagesToProduce.IndexOf(orderingRule.PageAfter);
-                pagesToProduce.Insert(indexOfPageAfter, orderingRule.PageBefore);
-            }
-
-            else if (pagesToProduce.Contains(orderingRule.PageBefore) && !pagesToProduce.Contains(orderingRule.PageAfter))
-            {
-                var indexOfPageBefore = pagesToProduce.IndexOf(orderingRule.PageBefore);
-                pagesToProduce.Insert(indexOfPageBefore + 1, orderingRule.PageAfter);
-            }
-            else
-            {
-                // we get here if both PageBefore and PageAfter are already in the list
-                // we then have to check if their order is correct
-
-                var indexOfPageBefore = pagesToProduce.IndexOf(orderingRule.PageBefore);
-                var indexOfPageAfter = pagesToProduce.IndexOf(orderingRule.PageAfter);
-
-                if (indexOfPageBefore > indexOfPageAfter)
+                if (_orderingRules.TryGetValue(innerPageToProduce, out var orderingRules) && orderingRules.Contains(pageToProduce))
                 {
-                    // order is not correct -> remove after and place behind before
-                    pagesToProduce.Remove(orderingRule.PageAfter);
-
-                    var newIndexOfPageBefore = pagesToProduce.IndexOf(orderingRule.PageBefore);
-                    pagesToProduce.Insert(newIndexOfPageBefore + 1, orderingRule.PageAfter);
+                    newIndex++;
                 }
             }
+
+            newUpdates[newIndex] = pageToProduce;
         }
 
-        var actualPagesToProduce = pagesToProduce.Concat(numbersNotInAnyRule).ToList();
-        update.PagesToProduce = actualPagesToProduce;
+        update.PagesToProduce = newUpdates.ToList();
     }
 
     private void ParseUpdate(string line)
@@ -142,6 +93,35 @@ internal sealed class PrintQueue
 
         var orderingRule = new PageOrderingRule(before, after);
         OrderingRules.Add(orderingRule);
+
+        if (!_orderingRules.TryGetValue(before, out var rule))
+        {
+            _orderingRules.Add(before, [after]);
+        }
+        else
+        {
+            rule.Add(after);
+        }
+    }
+
+    private bool IsInRightOrder(Update update)
+    {
+        var isInRightOrder = true;
+
+        foreach (var orderingRule in OrderingRules)
+        {
+            if (!IsOrderingRuleApplicable(update, orderingRule))
+            {
+                continue;
+            }
+
+            var indexOfBefore = update.PagesToProduce.IndexOf(orderingRule.PageBefore);
+            var indexOfAfter = update.PagesToProduce.IndexOf(orderingRule.PageAfter);
+
+            isInRightOrder &= indexOfBefore < indexOfAfter;
+        }
+
+        return isInRightOrder;
     }
 
     private static bool IsOrderingRuleApplicable(Update update, PageOrderingRule orderingRule)
