@@ -63,16 +63,21 @@ public sealed class Matrix<TElement>
         }
     }
 
+    public TElement[][] AsRaw()
+    {
+        return _matrix!;
+    }
+
     public IEnumerable<MatrixElement<TElement>> CollectInDirection(
         Position startingPosition,
         Direction direction,
-        Func<int, MatrixElement<TElement>, bool>? predicate = null)
+        Func<int, MatrixElement<TElement>?, bool>? predicate = null)
     {
         predicate ??= (_, _) => true;
 
         var currentPosition = startingPosition;
         var collected = 0;
-        var currentElement = new MatrixElement<TElement>();
+        MatrixElement<TElement>? currentElement = null;
 
         while (predicate.Invoke(collected, currentElement))
         {
@@ -86,7 +91,7 @@ public sealed class Matrix<TElement>
             if (currentValue != null)
             {
                 currentElement = new MatrixElement<TElement>(currentPosition, currentValue);
-                yield return currentElement;
+                yield return currentElement.Value;
             }
 
             currentPosition = currentPosition.AdjustBasedOnDirection(direction);
