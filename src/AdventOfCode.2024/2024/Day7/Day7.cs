@@ -2,7 +2,7 @@
 
 namespace AdventOfCode._2024._2024.Day7;
 
-[Puzzle(Day = 7, Title = "Bridge Repair", ExpectedSampleResultPart1 = "3749", ExpectedSampleResultPart2 = "?")]
+[Puzzle(Day = 7, Title = "Bridge Repair", ExpectedSampleResultPart1 = "3749", ExpectedSampleResultPart2 = "11387")]
 // ReSharper disable once UnusedType.Global
 internal sealed class Day7 : IPuzzleSolver
 {
