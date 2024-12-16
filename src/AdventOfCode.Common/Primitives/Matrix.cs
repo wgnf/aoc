@@ -1,6 +1,4 @@
-﻿using AdventOfCode.Common.Utils;
-
-namespace AdventOfCode.Common.Primitives;
+﻿namespace AdventOfCode.Common.Primitives;
 
 public sealed class Matrix<TElement>
 {
