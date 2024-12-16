@@ -26,6 +26,31 @@ public sealed class Matrix<TElement>
         }
     }
 
+    public TElement[][] AsRaw()
+    {
+        return _matrix!;
+    }
+
+    public Matrix<TElement> Copy(Func<TElement?, TElement> copyElementValueFunc)
+    {
+        var copiedMatrix = new Matrix<TElement>(_rows, _columns);
+
+        for (var row = 0; row < _rows; row++)
+        {
+            for (var column = 0; column < _columns; column++)
+            {
+                var position = new Position(row, column);
+                var value = _matrix[row][column];
+                var copiedValue = copyElementValueFunc(value);
+
+                var matrixElement = new MatrixElement<TElement>(position, copiedValue);
+                copiedMatrix.Insert(matrixElement);
+            }
+        }
+
+        return copiedMatrix;
+    }
+
     public bool IsPositionValid(Position position)
     {
         var isRowValid = IsRowValid(position.Row);
@@ -44,6 +69,17 @@ public sealed class Matrix<TElement>
         _matrix[element.Position.Row][element.Position.Column] = element.Value;
     }
 
+    public Position GetPositionOf(TElement element)
+    {
+        var foundMatrixElement = AsEnumerable().First(matrixElement => matrixElement.Value!.Equals(element));
+        return foundMatrixElement.Position;
+    }
+
+    public TElement GetElementAt(Position position)
+    {
+        return _matrix[position.Row][position.Column]!;
+    }
+
     public IEnumerable<MatrixElement<TElement>> AsEnumerable()
     {
         for (var row = 0; row < _rows; row++)
@@ -59,11 +95,6 @@ public sealed class Matrix<TElement>
                 }
             }
         }
-    }
-
-    public TElement[][] AsRaw()
-    {
-        return _matrix!;
     }
 
     public IEnumerable<MatrixElement<TElement>> CollectInDirection(
