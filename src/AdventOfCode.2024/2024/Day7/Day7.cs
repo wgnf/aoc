@@ -14,7 +14,7 @@ internal sealed class Day7 : IPuzzleSolver
 
         foreach (var inputLine in inputLines)
         {
-            _calibrationEquations.Add(new CalibrationEquation(inputLine));
+            _calibrationEquations.Add(new CalibrationEquation(inputLine, [CalibrationOperation.Addition, CalibrationOperation.Multiplication]));
         }
     }
 

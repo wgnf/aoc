@@ -10,7 +10,7 @@ public class Day7Tests
     [InlineData("5341448448: 1 88 5 8 7 4 9 3 7 6 4 392", 175_250_718_720)]
     public void HasExpectedHighestResult(string input, long expectedHighestResult)
     {
-        var calibrationEquation = new CalibrationEquation(input);
+        var calibrationEquation = new CalibrationEquation(input, [CalibrationOperation.Addition, CalibrationOperation.Multiplication]);
 
         var results = calibrationEquation.GetPossibleResults();
 

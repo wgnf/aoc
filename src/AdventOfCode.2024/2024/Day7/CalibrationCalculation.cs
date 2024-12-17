@@ -6,9 +6,9 @@ internal sealed class CalibrationCalculation
 {
     private readonly int _row;
     private readonly List<long> _numbers;
-    private readonly List<Operation> _operations;
+    private readonly List<CalibrationOperation> _operations;
 
-    public CalibrationCalculation(int row, List<long> numbers, List<Operation> operations)
+    public CalibrationCalculation(int row, List<long> numbers, List<CalibrationOperation> operations)
     {
         _row = row;
         _numbers = numbers;
@@ -26,8 +26,8 @@ internal sealed class CalibrationCalculation
 
             var localResult = operation switch
             {
-                Operation.Addition => localNumbers[0] + localNumbers[1],
-                Operation.Multiplication => localNumbers[0] * localNumbers[1],
+                CalibrationOperation.Addition => localNumbers[0] + localNumbers[1],
+                CalibrationOperation.Multiplication => localNumbers[0] * localNumbers[1],
                 _ => throw new InvalidOperationException("Invalid operation"),
             };
 
@@ -60,8 +60,8 @@ internal sealed class CalibrationCalculation
             var operation = localOperations[0];
             var operationChar = operation switch
             {
-                Operation.Addition => "+",
-                Operation.Multiplication => "*",
+                CalibrationOperation.Addition => "+",
+                CalibrationOperation.Multiplication => "*",
                 _ => throw new InvalidOperationException("Invalid operation"),
             };
 
