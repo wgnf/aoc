@@ -4,4 +4,5 @@ internal enum CalibrationOperation
 {
     Addition,
     Multiplication,
+    Concatenation,
 }

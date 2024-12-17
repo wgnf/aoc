@@ -6,21 +6,19 @@ namespace AdventOfCode._2024._2024.Day7;
 // ReSharper disable once UnusedType.Global
 internal sealed class Day7 : IPuzzleSolver
 {
-    private List<CalibrationEquation> _calibrationEquations = [];
+    private List<string> _inputLines = [];
 
     public void Init(IEnumerable<string> inputLines)
     {
-        _calibrationEquations = [];
-
-        foreach (var inputLine in inputLines)
-        {
-            _calibrationEquations.Add(new CalibrationEquation(inputLine, [CalibrationOperation.Addition, CalibrationOperation.Multiplication]));
-        }
+        _inputLines = inputLines.ToList();
     }
 
     public string SolvePart1()
     {
-        var totalCalibrationResult = _calibrationEquations
+        var calibrationEquations = _inputLines
+            .Select(inputLine => new CalibrationEquation(inputLine, [CalibrationOperation.Addition, CalibrationOperation.Multiplication]));
+
+        var totalCalibrationResult = calibrationEquations
             .Where(equation => equation.CanBeSolved())
             .Select(equation => equation.TestValue)
             .Sum();
@@ -30,6 +28,14 @@ internal sealed class Day7 : IPuzzleSolver
 
     public string SolvePart2()
     {
-        return "UNSOLVED";
+        var calibrationEquations = _inputLines
+            .Select(inputLine => new CalibrationEquation(inputLine, [CalibrationOperation.Addition, CalibrationOperation.Multiplication, CalibrationOperation.Concatenation]));
+
+        var totalCalibrationResult = calibrationEquations
+            .Where(equation => equation.CanBeSolved())
+            .Select(equation => equation.TestValue)
+            .Sum();
+
+        return totalCalibrationResult.ToString();
     }
 }

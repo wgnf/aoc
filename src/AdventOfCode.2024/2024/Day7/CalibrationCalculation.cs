@@ -28,6 +28,7 @@ internal sealed class CalibrationCalculation
             {
                 CalibrationOperation.Addition => localNumbers[0] + localNumbers[1],
                 CalibrationOperation.Multiplication => localNumbers[0] * localNumbers[1],
+                CalibrationOperation.Concatenation => long.Parse(localNumbers[0].ToString() + localNumbers[1]),
                 _ => throw new InvalidOperationException("Invalid operation"),
             };
 
@@ -62,6 +63,7 @@ internal sealed class CalibrationCalculation
             {
                 CalibrationOperation.Addition => "+",
                 CalibrationOperation.Multiplication => "*",
+                CalibrationOperation.Concatenation => "||",
                 _ => throw new InvalidOperationException("Invalid operation"),
             };
 
