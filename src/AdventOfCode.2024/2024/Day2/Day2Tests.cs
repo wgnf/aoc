@@ -1,5 +1,5 @@
 ﻿using AdventOfCode.Common.Utils;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace AdventOfCode._2024._2024.Day2;

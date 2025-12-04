@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using Xunit;
 
 namespace AdventOfCode._2024._2024.Day7;
