@@ -1,0 +1,12 @@
+﻿<Solution>
+  <Folder Name="/.build/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+  </Folder>
+    
+  <Project Path="AdventOfCode.2023/AdventOfCode.2023.csproj" />
+  <Project Path="AdventOfCode.2024/AdventOfCode.2024.csproj" />
+  <Project Path="AdventOfCode.Application.BlazorServer/AdventOfCode.Application.BlazorServer.csproj" />
+  <Project Path="AdventOfCode.Common/AdventOfCode.Common.csproj" />
+</Solution>
