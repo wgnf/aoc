@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <Authors>Martin Wagenführ</Authors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>
