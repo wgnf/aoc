@@ -6,7 +6,7 @@ public static class DirectionExtensions
 {
     public static Direction Turn90DegreesRight(this Direction direction)
     {
-        // TODO: support other directions aswell
+        // TODO: support other directions as well
         return direction switch
         {
             Direction.North => Direction.East,

@@ -1,20 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RootNamespace>AdventOfCode._2024</RootNamespace>
+    <RootNamespace>AdventOfCode._2025</RootNamespace>
   </PropertyGroup>
   
-  <ItemGroup>
-    <PackageReference Include="AwesomeAssertions"/>
-    <PackageReference Include="Microsoft.NET.Test.Sdk"/>
-    <PackageReference Include="xunit"/>
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\AdventOfCode.Common\AdventOfCode.Common.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="2024/Day*/*.txt">
+    <None Include="2025/Day*/*.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

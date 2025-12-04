@@ -7,6 +7,7 @@
     
   <Project Path="AdventOfCode.2023/AdventOfCode.2023.csproj" />
   <Project Path="AdventOfCode.2024/AdventOfCode.2024.csproj" />
+  <Project Path="AdventOfCode.2025/AdventOfCode.2025.csproj" />
   <Project Path="AdventOfCode.Application.BlazorServer/AdventOfCode.Application.BlazorServer.csproj" />
   <Project Path="AdventOfCode.Common/AdventOfCode.Common.csproj" />
 </Solution>
