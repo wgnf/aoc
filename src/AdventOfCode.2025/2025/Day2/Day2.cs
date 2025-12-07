@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics;
 using AdventOfCode.Common;
 using AdventOfCode.Common.Utils;
-
-// ReSharper disable UnusedType.Global
+using JetBrains.Annotations;
 
 namespace AdventOfCode._2025._2025.Day2;
 
+[UsedImplicitly]
 [Puzzle(Day = 2, Title = "Gift Shop", ExpectedSampleResultPart1 = "1227775554", ExpectedSampleResultPart2 = "4174379265")]
 public sealed class Day2 : IPuzzleSolver
 {

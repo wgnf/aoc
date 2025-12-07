@@ -17,4 +17,14 @@ public static class EnumerableUtils
             action(item);
         }
     }
+
+    public static uint SumX(this IEnumerable<uint> source)
+    {
+        return source.Aggregate<uint, uint>(0, (current, sum) => current + sum);
+    }
+    
+    public static ulong SumX(this IEnumerable<ulong> source)
+    {
+        return source.Aggregate<ulong, ulong>(0, (current, sum) => current + sum);
+    }
 }
