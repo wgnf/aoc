@@ -75,7 +75,6 @@ public sealed class Day2 : IPuzzleSolver
                 if (idGrouped.Length == 1) // all digits are repeated
                 {
                     result += id;
-                    Debug.WriteLine($"JA: {idText}");
                     continue;
                 }
 
@@ -91,7 +90,6 @@ public sealed class Day2 : IPuzzleSolver
                     if (allTheSame)
                     {
                         result += id;
-                        Debug.WriteLine($"JA: {idText}");
                         break;
                     }
                 }
