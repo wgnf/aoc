@@ -1,13 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace AdventOfCode.Common.Primitives;
 
 public sealed class Matrix<TElement>
 {
     private readonly TElement?[][] _matrix;
-    private readonly int _rows;
-    private readonly int _columns;
-
     public static Matrix<TElement> FromInputLines(IEnumerable<string> inputLines, Func<char, TElement> createElementDelegate)
     {
         var inputLinesList = inputLines.ToList();
@@ -34,8 +32,8 @@ public sealed class Matrix<TElement>
 
     public Matrix(int rows, int columns)
     {
-        _rows = rows;
-        _columns = columns;
+        Rows = rows;
+        Columns = columns;
 
         _matrix = new TElement?[rows][];
 
@@ -51,6 +49,10 @@ public sealed class Matrix<TElement>
             _matrix[row] = columnArray;
         }
     }
+    
+    public int Rows { get; }
+    
+    public int Columns { get; }
 
     public TElement[][] AsRaw()
     {
@@ -59,11 +61,11 @@ public sealed class Matrix<TElement>
 
     public Matrix<TElement> Copy(Func<TElement?, TElement> copyElementValueFunc)
     {
-        var copiedMatrix = new Matrix<TElement>(_rows, _columns);
+        var copiedMatrix = new Matrix<TElement>(Rows, Columns);
 
-        for (var row = 0; row < _rows; row++)
+        for (var row = 0; row < Rows; row++)
         {
-            for (var column = 0; column < _columns; column++)
+            for (var column = 0; column < Columns; column++)
             {
                 var position = new Position(row, column);
                 var value = _matrix[row][column];
@@ -143,9 +145,9 @@ public sealed class Matrix<TElement>
 
     public IEnumerable<MatrixElement<TElement>> AsEnumerable()
     {
-        for (var row = 0; row < _rows; row++)
+        for (var row = 0; row < Rows; row++)
         {
-            for (var column = 0; column < _columns; column++)
+            for (var column = 0; column < Columns; column++)
             {
                 var currentValue = _matrix[row][column];
                 if (currentValue != null)
@@ -188,13 +190,33 @@ public sealed class Matrix<TElement>
         }
     }
 
+    public override string ToString()
+    {
+        var stringRepresentation = new StringBuilder();
+        for (var row = 0; row < Rows; row++)
+        {
+            for (var column = 0; column < Columns; column++)
+            {
+                var currentValue = _matrix[row][column];
+                if (currentValue != null)
+                {
+                    stringRepresentation.Append($"{currentValue} ");
+                }
+            }
+            
+            stringRepresentation.AppendLine();
+        }
+        
+        return stringRepresentation.ToString();
+    }
+
     private bool IsRowValid(int row)
     {
-        return row >= 0 && row < _rows;
+        return row >= 0 && row < Rows;
     }
 
     private bool IsColumnValid(int column)
     {
-        return column >= 0 && column < _columns;
+        return column >= 0 && column < Columns;
     }
 }
