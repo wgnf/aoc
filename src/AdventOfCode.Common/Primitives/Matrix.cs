@@ -1,10 +1,36 @@
-﻿namespace AdventOfCode.Common.Primitives;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace AdventOfCode.Common.Primitives;
 
 public sealed class Matrix<TElement>
 {
     private readonly TElement?[][] _matrix;
     private readonly int _rows;
     private readonly int _columns;
+
+    public static Matrix<TElement> FromInputLines(IEnumerable<string> inputLines, Func<char, TElement> createElementDelegate)
+    {
+        var inputLinesList = inputLines.ToList();
+
+        var matrix = new Matrix<TElement>(inputLinesList.Count, inputLinesList.FirstOrDefault()?.Length ?? 1);
+
+        for (var row = 0; row < inputLinesList.Count; row++)
+        {
+            var inputLine = inputLinesList[row];
+
+            for (var column = 0; column < inputLine.Length; column++)
+            {
+                var c = inputLine[column];
+                var position = new Position(row, column);
+                var element = createElementDelegate(c);
+                var matrixElement = new MatrixElement<TElement>(position, element);
+                
+                matrix.Insert(matrixElement);
+            }
+        }
+
+        return matrix;
+    }
 
     public Matrix(int rows, int columns)
     {
@@ -78,6 +104,41 @@ public sealed class Matrix<TElement>
     public TElement GetElementAt(Position position)
     {
         return _matrix[position.Row][position.Column]!;
+    }
+
+    public IEnumerable<MatrixElement<TElement>> GetNeighboringElements(Position position)
+    {
+        var neighbors = new List<MatrixElement<TElement>>();
+        var directions = Enum.GetValues<Direction>();
+        foreach (var direction in directions)
+        {
+            if (TryGetElementAtDirectionFromPosition(position, direction, out var element))
+            {
+                neighbors.Add(element.Value);
+            }
+        }
+        
+        return neighbors;
+    }
+
+    public bool TryGetElementAtDirectionFromPosition(Position position, Direction direction, [NotNullWhen(true)] out MatrixElement<TElement>? element)
+    {
+        var adjustedPosition = position.AdjustBasedOnDirection(direction);
+        element = null;
+        
+        if (!IsPositionValid(adjustedPosition))
+        {
+            return false;
+        }
+        
+        var foundElement = GetElementAt(adjustedPosition);
+        if (foundElement == null)
+        {
+            return false;
+        }
+        
+        element = new MatrixElement<TElement>(adjustedPosition, foundElement);
+        return true;
     }
 
     public IEnumerable<MatrixElement<TElement>> AsEnumerable()
