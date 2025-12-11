@@ -163,13 +163,13 @@ public sealed class Matrix<TElement>
     public IEnumerable<MatrixElement<TElement>> CollectInDirection(
         Position startingPosition,
         Direction direction,
-        Func<int, MatrixElement<TElement>?, bool>? predicate = null)
+        Func<int, MatrixElement<TElement>, bool>? predicate = null)
     {
         predicate ??= (_, _) => true;
 
         var currentPosition = startingPosition;
         var collected = 0;
-        MatrixElement<TElement>? currentElement = null;
+        var currentElement = MatrixElement<TElement>.Empty;
 
         while (predicate.Invoke(collected, currentElement))
         {
@@ -183,7 +183,7 @@ public sealed class Matrix<TElement>
             if (currentValue != null)
             {
                 currentElement = new MatrixElement<TElement>(currentPosition, currentValue);
-                yield return currentElement.Value;
+                yield return currentElement;
             }
 
             currentPosition = currentPosition.AdjustBasedOnDirection(direction);

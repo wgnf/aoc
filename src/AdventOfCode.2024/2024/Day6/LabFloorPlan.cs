@@ -44,7 +44,7 @@ internal sealed class LabFloorPlan
         while (_floorPlan.IsPositionValid(_currentPlayerPosition))
         {
             var collected = _floorPlan
-                .CollectInDirection(_currentPlayerPosition, _currentPlayerDirection, (_, labTileElement) => !labTileElement?.Value.IsObstacle ?? true)
+                .CollectInDirection(_currentPlayerPosition, _currentPlayerDirection, (_, labTileElement) => labTileElement.Value.IsObstacle)
                 .ToList();
 
             var collectedWithoutObstacle = collected.Where(element => !element.Value.IsObstacle).ToList();
